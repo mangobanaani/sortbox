@@ -98,7 +98,7 @@ def count_classifications(since: datetime | None = None) -> int:
             result = conn.execute(
                 "SELECT COUNT(*) FROM classification_events"
             ).fetchone()
-        return result[0]
+        return int(result[0]) if result else 0
 
 
 def get_label_counts() -> dict[str, int]:
@@ -117,7 +117,7 @@ def count_by_method(method: str) -> int:
             "SELECT COUNT(*) FROM classification_events WHERE method = ?",
             (method,)
         ).fetchone()
-        return result[0]
+        return int(result[0]) if result else 0
 
 
 def get_average_confidence() -> float:

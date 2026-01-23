@@ -74,7 +74,7 @@ if frontend_dist.exists():
 
     # Serve index.html for all other routes (SPA routing)
     @app.get("/{full_path:path}")
-    async def serve_frontend(full_path: str):
+    async def serve_frontend(full_path: str) -> FileResponse:
         return FileResponse(frontend_dist / "index.html")
 
 if __name__ == "__main__":
