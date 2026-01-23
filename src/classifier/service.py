@@ -48,7 +48,7 @@ def create_app(
                         insert_classification_event(
                             label=result.labels[0],
                             method="rule",
-                            confidence=result.confidence
+                            confidence=result.confidence,
                         )
                     except Exception as e:
                         # Log but don't fail classification
@@ -72,7 +72,7 @@ def create_app(
                         insert_classification_event(
                             label=result.labels[0],
                             method="llm",
-                            confidence=result.confidence
+                            confidence=result.confidence,
                         )
                     except Exception as e:
                         # Log but don't fail classification

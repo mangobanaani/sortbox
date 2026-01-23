@@ -21,6 +21,7 @@ def test_init_database_creates_table():
     with tempfile.TemporaryDirectory() as tmpdir:
         # Override DATABASE_PATH for test
         import src.database
+
         original_path = src.database.DATABASE_PATH
         src.database.DATABASE_PATH = Path(tmpdir) / "test.db"
 
@@ -44,6 +45,7 @@ def test_init_database_creates_indexes():
     """Test that database initialization creates the required indexes."""
     with tempfile.TemporaryDirectory() as tmpdir:
         import src.database
+
         original_path = src.database.DATABASE_PATH
         src.database.DATABASE_PATH = Path(tmpdir) / "test.db"
 
@@ -67,6 +69,7 @@ def test_init_database_idempotency():
     """Test that calling init_database multiple times is safe."""
     with tempfile.TemporaryDirectory() as tmpdir:
         import src.database
+
         original_path = src.database.DATABASE_PATH
         src.database.DATABASE_PATH = Path(tmpdir) / "test.db"
 
@@ -91,6 +94,7 @@ def test_get_connection_error_handling():
     """Test that get_connection handles errors properly."""
     with tempfile.TemporaryDirectory() as tmpdir:
         import src.database
+
         original_path = src.database.DATABASE_PATH
         # Set to invalid path (inside a file, not a directory)
         test_file = Path(tmpdir) / "file.txt"
@@ -109,6 +113,7 @@ def test_insert_classification_event():
     """Test inserting a classification event."""
     with tempfile.TemporaryDirectory() as tmpdir:
         import src.database
+
         original_path = src.database.DATABASE_PATH
         src.database.DATABASE_PATH = Path(tmpdir) / "test.db"
 
@@ -134,6 +139,7 @@ def test_insert_classification_event_validation():
     """Test that insert_classification_event validates inputs."""
     with tempfile.TemporaryDirectory() as tmpdir:
         import src.database
+
         original_path = src.database.DATABASE_PATH
         src.database.DATABASE_PATH = Path(tmpdir) / "test.db"
 
@@ -181,6 +187,7 @@ def test_insert_classification_event_edge_cases():
     """Test inserting classification events with edge case values."""
     with tempfile.TemporaryDirectory() as tmpdir:
         import src.database
+
         original_path = src.database.DATABASE_PATH
         src.database.DATABASE_PATH = Path(tmpdir) / "test.db"
 
@@ -218,6 +225,7 @@ def test_insert_classification_event_multiple():
     """Test inserting multiple classification events."""
     with tempfile.TemporaryDirectory() as tmpdir:
         import src.database
+
         original_path = src.database.DATABASE_PATH
         src.database.DATABASE_PATH = Path(tmpdir) / "test.db"
 
@@ -255,6 +263,7 @@ def test_insert_classification_event_timestamp():
     """Test that timestamp is auto-populated."""
     with tempfile.TemporaryDirectory() as tmpdir:
         import src.database
+
         original_path = src.database.DATABASE_PATH
         src.database.DATABASE_PATH = Path(tmpdir) / "test.db"
 
@@ -280,6 +289,7 @@ def test_count_classifications():
     """Test counting total classifications."""
     with tempfile.TemporaryDirectory() as tmpdir:
         import src.database
+
         original_path = src.database.DATABASE_PATH
         src.database.DATABASE_PATH = Path(tmpdir) / "test.db"
 
@@ -298,6 +308,7 @@ def test_count_classifications_with_date_filter():
     """Test counting classifications since a specific date."""
     with tempfile.TemporaryDirectory() as tmpdir:
         import src.database
+
         original_path = src.database.DATABASE_PATH
         src.database.DATABASE_PATH = Path(tmpdir) / "test.db"
 
@@ -322,6 +333,7 @@ def test_get_label_counts():
     """Test getting classification counts per label."""
     with tempfile.TemporaryDirectory() as tmpdir:
         import src.database
+
         original_path = src.database.DATABASE_PATH
         src.database.DATABASE_PATH = Path(tmpdir) / "test.db"
 
@@ -342,6 +354,7 @@ def test_count_by_method():
     """Test counting classifications by method."""
     with tempfile.TemporaryDirectory() as tmpdir:
         import src.database
+
         original_path = src.database.DATABASE_PATH
         src.database.DATABASE_PATH = Path(tmpdir) / "test.db"
 
@@ -363,6 +376,7 @@ def test_get_average_confidence():
     """Test calculating average confidence."""
     with tempfile.TemporaryDirectory() as tmpdir:
         import src.database
+
         original_path = src.database.DATABASE_PATH
         src.database.DATABASE_PATH = Path(tmpdir) / "test.db"
 

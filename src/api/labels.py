@@ -40,7 +40,7 @@ async def get_labels() -> LabelsResponse:
     labels_dict = {
         name: LabelResponse(
             description=label.description,
-            rules=[_rule_to_response(rule) for rule in label.rules]
+            rules=[_rule_to_response(rule) for rule in label.rules],
         )
         for name, label in config.labels.items()
     }
@@ -81,15 +81,12 @@ async def create_label(request: CreateLabelRequest) -> dict[str, str]:
             rule_dict["header_list_unsubscribe"] = True
         rules_list.append(rule_dict)
 
-    new_label = {
-        "description": request.description,
-        "rules": rules_list
-    }
+    new_label = {"description": request.description, "rules": rules_list}
 
     data["labels"][request.name] = new_label
 
     # Write back to file
-    with open(config_path, 'w') as f:
+    with open(config_path, "w") as f:
         yaml.safe_dump(data, f, default_flow_style=False, sort_keys=False)
 
     return {"message": f"Label '{request.name}' created"}
@@ -120,15 +117,12 @@ async def update_label(name: str, request: UpdateLabelRequest) -> dict[str, str]
             rule_dict["header_list_unsubscribe"] = True
         rules_list.append(rule_dict)
 
-    updated_label = {
-        "description": request.description,
-        "rules": rules_list
-    }
+    updated_label = {"description": request.description, "rules": rules_list}
 
     data["labels"][name] = updated_label
 
     # Write back
-    with open(config_path, 'w') as f:
+    with open(config_path, "w") as f:
         yaml.safe_dump(data, f, default_flow_style=False, sort_keys=False)
 
     return {"message": f"Label '{name}' updated"}
@@ -151,7 +145,7 @@ async def delete_label(name: str) -> None:
     del data["labels"][name]
 
     # Write back
-    with open(config_path, 'w') as f:
+    with open(config_path, "w") as f:
         yaml.safe_dump(data, f, default_flow_style=False, sort_keys=False)
 
 
@@ -166,7 +160,7 @@ async def test_email_classification(request: TestEmailRequest) -> TestEmailRespo
         email_id="test",
         sender=request.email["sender"],
         subject=request.email["subject"],
-        body_preview=request.email.get("body_preview", "")
+        body_preview=request.email.get("body_preview", ""),
     )
 
     # Try rule matching first
@@ -180,18 +174,17 @@ async def test_email_classification(request: TestEmailRequest) -> TestEmailRespo
             # Check if this rule matches
             if rule.from_pattern and email.sender:
                 import fnmatch
+
                 if fnmatch.fnmatch(email.sender.lower(), rule.from_pattern.lower()):
-                    matched_rules_list.append(MatchedRule(
-                        label=label_name,
-                        rule=_rule_to_response(rule)
-                    ))
+                    matched_rules_list.append(
+                        MatchedRule(label=label_name, rule=_rule_to_response(rule))
+                    )
             elif rule.subject_contains:
                 subject_lower = email.subject.lower()
                 if any(kw.lower() in subject_lower for kw in rule.subject_contains):
-                    matched_rules_list.append(MatchedRule(
-                        label=label_name,
-                        rule=_rule_to_response(rule)
-                    ))
+                    matched_rules_list.append(
+                        MatchedRule(label=label_name, rule=_rule_to_response(rule))
+                    )
 
     time_ms = int((time.time() - start_time) * 1000)
 
@@ -200,5 +193,5 @@ async def test_email_classification(request: TestEmailRequest) -> TestEmailRespo
         matched_rules=matched_rules_list,
         confidence=1.0 if matched_labels else 0.0,
         llm_used=False,
-        time_ms=time_ms
+        time_ms=time_ms,
     )

@@ -9,7 +9,7 @@ from src.config_watcher import watch_config_file
 
 @pytest.mark.asyncio
 async def test_config_reload_on_change():
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
         f.write("labels: {}\nsettings: {llm_provider: claude}")
         temp_path = Path(f.name)
 
@@ -21,15 +21,13 @@ async def test_config_reload_on_change():
 
     try:
         # Start watcher in background
-        watcher_task = asyncio.create_task(
-            watch_config_file(temp_path, on_reload)
-        )
+        watcher_task = asyncio.create_task(watch_config_file(temp_path, on_reload))
 
         # Give it time to start
         await asyncio.sleep(0.1)
 
         # Modify file
-        with open(temp_path, 'w') as f:
+        with open(temp_path, "w") as f:
             config_str = (
                 "labels: {finance: {description: test, rules: []}}\n"
                 "settings: {llm_provider: claude}"

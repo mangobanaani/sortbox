@@ -16,6 +16,7 @@ async def test_get_analytics():
     # Setup test database
     with tempfile.TemporaryDirectory() as tmpdir:
         import src.database
+
         original_path = src.database.DATABASE_PATH
         src.database.DATABASE_PATH = Path(tmpdir) / "test.db"
 
@@ -49,6 +50,7 @@ async def test_get_analytics_empty_database():
     """Test GET /api/analytics endpoint with empty database."""
     with tempfile.TemporaryDirectory() as tmpdir:
         import src.database
+
         original_path = src.database.DATABASE_PATH
         src.database.DATABASE_PATH = Path(tmpdir) / "test.db"
 
@@ -79,6 +81,7 @@ async def test_get_analytics_time_filtered():
     """Test GET /api/analytics endpoint with time-filtered counts."""
     with tempfile.TemporaryDirectory() as tmpdir:
         import src.database
+
         original_path = src.database.DATABASE_PATH
         src.database.DATABASE_PATH = Path(tmpdir) / "test.db"
 
@@ -93,7 +96,7 @@ async def test_get_analytics_time_filtered():
             conn.execute(
                 "INSERT INTO classification_events "
                 "(timestamp, label, method, confidence) VALUES (?, ?, ?, ?)",
-                (old_timestamp, "finance", "rule", 1.0)
+                (old_timestamp, "finance", "rule", 1.0),
             )
 
             # Event from 3 days ago (should count in this_week but not today)
@@ -101,7 +104,7 @@ async def test_get_analytics_time_filtered():
             conn.execute(
                 "INSERT INTO classification_events "
                 "(timestamp, label, method, confidence) VALUES (?, ?, ?, ?)",
-                (week_timestamp, "newsletters", "llm", 0.8)
+                (week_timestamp, "newsletters", "llm", 0.8),
             )
 
             # Event from today (should count in both today and this_week)
@@ -109,7 +112,7 @@ async def test_get_analytics_time_filtered():
             conn.execute(
                 "INSERT INTO classification_events "
                 "(timestamp, label, method, confidence) VALUES (?, ?, ?, ?)",
-                (today_timestamp, "personal", "rule", 0.95)
+                (today_timestamp, "personal", "rule", 0.95),
             )
 
             conn.commit()
@@ -135,6 +138,7 @@ async def test_get_analytics_database_error():
     """Test GET /api/analytics endpoint handles database errors."""
     with tempfile.TemporaryDirectory() as tmpdir:
         import src.database
+
         original_path = src.database.DATABASE_PATH
         src.database.DATABASE_PATH = Path(tmpdir) / "test.db"
 
@@ -143,12 +147,12 @@ async def test_get_analytics_database_error():
 
             # Mock count_classifications to raise an exception
             with patch(
-                'src.api.analytics.count_classifications',
-                side_effect=Exception("Database error")
+                "src.api.analytics.count_classifications",
+                side_effect=Exception("Database error"),
             ):
                 async with AsyncClient(
-                transport=ASGITransport(app=app), base_url="http://test"
-            ) as client:
+                    transport=ASGITransport(app=app), base_url="http://test"
+                ) as client:
                     response = await client.get("/api/analytics")
 
                 assert response.status_code == 500

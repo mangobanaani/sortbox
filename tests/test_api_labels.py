@@ -44,11 +44,14 @@ async def test_create_label(backup_config):
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
     ) as client:
-        response = await client.post("/api/labels", json={
-            "name": "test-new-label",
-            "description": "Test label description",
-            "rules": []
-        })
+        response = await client.post(
+            "/api/labels",
+            json={
+                "name": "test-new-label",
+                "description": "Test label description",
+                "rules": [],
+            },
+        )
     assert response.status_code == 201
 
     # Verify the label was created

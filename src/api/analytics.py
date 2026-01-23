@@ -1,4 +1,5 @@
 """Analytics API endpoints."""
+
 from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, HTTPException
@@ -48,6 +49,5 @@ async def get_analytics() -> AnalyticsResponse:
         )
     except Exception as e:
         raise HTTPException(
-            status_code=500,
-            detail=f"Failed to retrieve analytics: {str(e)}"
+            status_code=500, detail=f"Failed to retrieve analytics: {str(e)}"
         ) from e

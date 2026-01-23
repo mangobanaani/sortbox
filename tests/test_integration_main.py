@@ -12,10 +12,7 @@ def test_get_provider_claude():
     """Test that get_provider returns ClaudeProvider for claude"""
     from src.main import get_provider
 
-    config = LabelConfig(
-        labels={},
-        settings=Settings(llm_provider="claude")
-    )
+    config = LabelConfig(labels={}, settings=Settings(llm_provider="claude"))
     provider = get_provider(config)
     assert provider.__class__.__name__ == "ClaudeProvider"
 
@@ -28,10 +25,7 @@ def test_get_provider_openai():
 
     # Mock the OpenAI API key
     with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
-        config = LabelConfig(
-            labels={},
-            settings=Settings(llm_provider="openai")
-        )
+        config = LabelConfig(labels={}, settings=Settings(llm_provider="openai"))
         provider = get_provider(config)
         assert provider.__class__.__name__ == "OpenAIProvider"
 
@@ -40,10 +34,7 @@ def test_get_provider_ollama():
     """Test that get_provider returns OllamaProvider for ollama"""
     from src.main import get_provider
 
-    config = LabelConfig(
-        labels={},
-        settings=Settings(llm_provider="ollama")
-    )
+    config = LabelConfig(labels={}, settings=Settings(llm_provider="ollama"))
     provider = get_provider(config)
     assert provider.__class__.__name__ == "OllamaProvider"
 
@@ -52,10 +43,7 @@ def test_get_provider_unknown():
     """Test that get_provider raises ValueError for unknown provider"""
     from src.main import get_provider
 
-    config = LabelConfig(
-        labels={},
-        settings=Settings(llm_provider="unknown")
-    )
+    config = LabelConfig(labels={}, settings=Settings(llm_provider="unknown"))
     with pytest.raises(ValueError, match="Unknown provider: unknown"):
         get_provider(config)
 
@@ -64,18 +52,14 @@ def test_get_provider_unknown():
 async def test_app_initialization():
     """Test that app starts and basic routes are registered"""
     # Mock the config loading to avoid needing a real labels.yaml file
-    with patch('src.main.load_config') as mock_load_config, \
-         patch('src.main.get_provider') as mock_get_provider:
-
+    with (
+        patch("src.main.load_config") as mock_load_config,
+        patch("src.main.get_provider") as mock_get_provider,
+    ):
         # Setup mock config
         mock_config = LabelConfig(
-            labels={
-                "test-label": {
-                    "description": "Test label",
-                    "rules": []
-                }
-            },
-            settings=Settings(llm_provider="claude")
+            labels={"test-label": {"description": "Test label", "rules": []}},
+            settings=Settings(llm_provider="claude"),
         )
         mock_load_config.return_value = mock_config
 
@@ -104,23 +88,25 @@ async def test_app_initialization():
 async def test_app_classify_endpoint_exists():
     """Test that classify endpoint exists and is accessible"""
     # Mock the config loading
-    with patch('src.main.load_config') as mock_load_config, \
-         patch('src.main.get_provider') as mock_get_provider:
-
+    with (
+        patch("src.main.load_config") as mock_load_config,
+        patch("src.main.get_provider") as mock_get_provider,
+    ):
         # Setup mock config
         mock_config = LabelConfig(
             labels={
                 "invoices": {
                     "description": "Bills",
-                    "rules": [{"from": "*@stripe.com"}]
+                    "rules": [{"from": "*@stripe.com"}],
                 }
             },
-            settings=Settings(llm_provider="claude")
+            settings=Settings(llm_provider="claude"),
         )
         mock_load_config.return_value = mock_config
 
         # Setup mock provider
         from src.classifier.providers.base import LLMClassification
+
         mock_provider = MagicMock()
 
         async def mock_classify(emails, label_definitions):
@@ -143,10 +129,10 @@ async def test_app_classify_endpoint_exists():
                             "email_id": "test001",
                             "sender": "billing@stripe.com",
                             "subject": "Invoice",
-                            "body_preview": "Your invoice is ready"
+                            "body_preview": "Your invoice is ready",
                         }
                     ]
-                }
+                },
             )
             assert response.status_code == 200
             data = response.json()
@@ -163,10 +149,10 @@ def test_module_level_initialization():
     import src.main
 
     # Verify that expected module-level variables exist
-    assert hasattr(src.main, 'config_path')
-    assert hasattr(src.main, 'config')
-    assert hasattr(src.main, 'provider')
-    assert hasattr(src.main, 'app')
+    assert hasattr(src.main, "config_path")
+    assert hasattr(src.main, "config")
+    assert hasattr(src.main, "provider")
+    assert hasattr(src.main, "app")
 
     # Verify types
     assert src.main.config_path.name == "labels.yaml"
@@ -177,10 +163,11 @@ def test_module_level_initialization():
 
 def test_uvicorn_main_block():
     """Test that __main__ block would call uvicorn.run"""
-    with patch('src.main.load_config'), \
-         patch('src.main.get_provider'), \
-         patch('src.main.uvicorn.run'):
-
+    with (
+        patch("src.main.load_config"),
+        patch("src.main.get_provider"),
+        patch("src.main.uvicorn.run"),
+    ):
         # Import the module
         import src.main
 
@@ -190,5 +177,5 @@ def test_uvicorn_main_block():
 
         # Note: This test verifies the structure exists, not that it executes
         # since __name__ will be 'src.main' during test import
-        assert hasattr(src.main, 'app')
-        assert hasattr(src.main, 'uvicorn')
+        assert hasattr(src.main, "app")
+        assert hasattr(src.main, "uvicorn")

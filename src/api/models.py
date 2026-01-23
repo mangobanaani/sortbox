@@ -33,7 +33,7 @@ class CreateLabelRequest(BaseModel):
     @field_validator("name")
     @classmethod
     def validate_name(cls, v: str) -> str:
-        if not re.match(r'^[a-z0-9-]+$', v):
+        if not re.match(r"^[a-z0-9-]+$", v):
             raise ValueError(
                 "Label name must be lowercase alphanumeric with hyphens only"
             )

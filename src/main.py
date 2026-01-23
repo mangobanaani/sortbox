@@ -49,9 +49,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         app.state.config = new_config
         # TODO: broadcast SSE event
 
-    watcher_task = asyncio.create_task(
-        watch_config_file(config_path, reload_config)
-    )
+    watcher_task = asyncio.create_task(watch_config_file(config_path, reload_config))
 
     yield
 
@@ -76,6 +74,7 @@ if frontend_dist.exists():
     @app.get("/{full_path:path}")
     async def serve_frontend(full_path: str) -> FileResponse:
         return FileResponse(frontend_dist / "index.html")
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)

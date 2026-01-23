@@ -1,4 +1,5 @@
 """Database layer for analytics tracking."""
+
 import sqlite3
 from collections.abc import Generator
 from contextlib import contextmanager
@@ -28,8 +29,7 @@ def init_database() -> None:
                 "ON classification_events(timestamp)"
             )
             conn.execute(
-                "CREATE INDEX IF NOT EXISTS idx_label "
-                "ON classification_events(label)"
+                "CREATE INDEX IF NOT EXISTS idx_label ON classification_events(label)"
             )
             conn.commit()
     except sqlite3.Error as e:
@@ -47,11 +47,7 @@ def get_connection() -> Generator[sqlite3.Connection, None, None]:
         conn.close()
 
 
-def insert_classification_event(
-    label: str,
-    method: str,
-    confidence: float
-) -> None:
+def insert_classification_event(label: str, method: str, confidence: float) -> None:
     """Insert a classification event.
 
     Args:
@@ -79,7 +75,7 @@ def insert_classification_event(
             conn.execute(
                 "INSERT INTO classification_events "
                 "(label, method, confidence) VALUES (?, ?, ?)",
-                (label, method, confidence)
+                (label, method, confidence),
             )
             conn.commit()
     except sqlite3.Error as e:
@@ -92,7 +88,7 @@ def count_classifications(since: datetime | None = None) -> int:
         if since:
             result = conn.execute(
                 "SELECT COUNT(*) FROM classification_events WHERE timestamp >= ?",
-                (since,)
+                (since,),
             ).fetchone()
         else:
             result = conn.execute(
@@ -114,8 +110,7 @@ def count_by_method(method: str) -> int:
     """Count classifications by method (rule/llm)."""
     with get_connection() as conn:
         result = conn.execute(
-            "SELECT COUNT(*) FROM classification_events WHERE method = ?",
-            (method,)
+            "SELECT COUNT(*) FROM classification_events WHERE method = ?", (method,)
         ).fetchone()
         return int(result[0]) if result else 0
 

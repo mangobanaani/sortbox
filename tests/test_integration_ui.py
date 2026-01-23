@@ -10,6 +10,7 @@ This tests the full lifecycle of label management through the API:
 7. Delete the label
 8. Verify deletion
 """
+
 import shutil
 from pathlib import Path
 
@@ -56,20 +57,17 @@ async def test_full_crud_flow(backup_config):
 
         # Step 2: Create a new label (POST /api/labels)
         new_label_name = "test-integration-label"
-        create_response = await client.post("/api/labels", json={
-            "name": new_label_name,
-            "description": "Integration test label for automated emails",
-            "rules": [
-                {
-                    "type": "from",
-                    "pattern": "*@test-automation.com"
-                },
-                {
-                    "type": "subject_contains",
-                    "keywords": ["automated", "test"]
-                }
-            ]
-        })
+        create_response = await client.post(
+            "/api/labels",
+            json={
+                "name": new_label_name,
+                "description": "Integration test label for automated emails",
+                "rules": [
+                    {"type": "from", "pattern": "*@test-automation.com"},
+                    {"type": "subject_contains", "keywords": ["automated", "test"]},
+                ],
+            },
+        )
         assert create_response.status_code == 201
         create_data = create_response.json()
         assert "message" in create_data
@@ -96,29 +94,26 @@ async def test_full_crud_flow(backup_config):
         assert from_rule["pattern"] == "*@test-automation.com"
 
         subject_rule = next(
-            r for r in created_label["rules"]
-            if r["type"] == "subject_contains"
+            r for r in created_label["rules"] if r["type"] == "subject_contains"
         )
         assert "automated" in subject_rule["keywords"]
         assert "test" in subject_rule["keywords"]
 
         # Step 4: Update the label (PUT /api/labels/{name})
-        update_response = await client.put(f"/api/labels/{new_label_name}", json={
-            "description": "Updated integration test label",
-            "rules": [
-                {
-                    "type": "from",
-                    "pattern": "*@updated-automation.com"
-                },
-                {
-                    "type": "subject_contains",
-                    "keywords": ["updated", "automated", "test"]
-                },
-                {
-                    "type": "header_list_unsubscribe"
-                }
-            ]
-        })
+        update_response = await client.put(
+            f"/api/labels/{new_label_name}",
+            json={
+                "description": "Updated integration test label",
+                "rules": [
+                    {"type": "from", "pattern": "*@updated-automation.com"},
+                    {
+                        "type": "subject_contains",
+                        "keywords": ["updated", "automated", "test"],
+                    },
+                    {"type": "header_list_unsubscribe"},
+                ],
+            },
+        )
         assert update_response.status_code == 200
         update_data = update_response.json()
         assert "message" in update_data
@@ -143,20 +138,22 @@ async def test_full_crud_flow(backup_config):
         assert from_rule["pattern"] == "*@updated-automation.com"
 
         subject_rule = next(
-            r for r in updated_label["rules"]
-            if r["type"] == "subject_contains"
+            r for r in updated_label["rules"] if r["type"] == "subject_contains"
         )
         assert "updated" in subject_rule["keywords"]
         assert len(subject_rule["keywords"]) == 3
 
         # Step 6: Test classification with the new label (POST /api/labels/test)
-        test_response = await client.post("/api/labels/test", json={
-            "email": {
-                "sender": "notification@updated-automation.com",
-                "subject": "Updated automated test report",
-                "body_preview": "This is a test email for classification"
-            }
-        })
+        test_response = await client.post(
+            "/api/labels/test",
+            json={
+                "email": {
+                    "sender": "notification@updated-automation.com",
+                    "subject": "Updated automated test report",
+                    "body_preview": "This is a test email for classification",
+                }
+            },
+        )
         assert test_response.status_code == 200
         test_data = test_response.json()
 
@@ -172,8 +169,7 @@ async def test_full_crud_flow(backup_config):
 
         # Verify the matched rule details
         matched_rule = next(
-            r for r in test_data["matched_rules"]
-            if r["label"] == new_label_name
+            r for r in test_data["matched_rules"] if r["label"] == new_label_name
         )
         assert matched_rule["rule"]["type"] in ["from", "subject_contains"]
 
@@ -211,19 +207,22 @@ async def test_error_cases(backup_config):
         transport=ASGITransport(app=app), base_url="http://test"
     ) as client:
         # Test creating duplicate label
-        duplicate_response = await client.post("/api/labels", json={
-            "name": "finance",  # Already exists
-            "description": "Duplicate label",
-            "rules": []
-        })
+        duplicate_response = await client.post(
+            "/api/labels",
+            json={
+                "name": "finance",  # Already exists
+                "description": "Duplicate label",
+                "rules": [],
+            },
+        )
         assert duplicate_response.status_code == 400
         assert "already exists" in duplicate_response.json()["detail"]
 
         # Test updating non-existent label
-        update_response = await client.put("/api/labels/nonexistent-label", json={
-            "description": "Updated",
-            "rules": []
-        })
+        update_response = await client.put(
+            "/api/labels/nonexistent-label",
+            json={"description": "Updated", "rules": []},
+        )
         assert update_response.status_code == 404
         assert "not found" in update_response.json()["detail"]
 
