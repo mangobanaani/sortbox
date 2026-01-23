@@ -1,11 +1,10 @@
 # sortbox
 
-[![CI](https://github.com/USERNAME/sortbox/actions/workflows/ci.yml/badge.svg)](https://github.com/USERNAME/sortbox/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/USERNAME/sortbox/branch/main/graph/badge.svg)](https://codecov.io/gh/USERNAME/sortbox)
+[![CI](https://github.com/mangobanaani/sortbox/actions/workflows/ci.yml/badge.svg)](https://github.com/mangobanaani/sortbox/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/mangobanaani/sortbox/branch/main/graph/badge.svg)](https://codecov.io/gh/mangobanaani/sortbox)
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
-
-> **Note:** Replace `USERNAME` in badges above with your GitHub username
 
 Smart email organization powered by rule-based matching and LLM intelligence. Automatically classifies and labels Gmail messages using an n8n workflow + Python service.
 
@@ -21,16 +20,6 @@ Smart email organization powered by rule-based matching and LLM intelligence. Au
 - **Analytics dashboard** - Real-time classification tracking and insights
 - **98% test coverage** - Comprehensive test suite
 - **Docker ready** - Containerized deployment
-
-### Planned (Orchestrator - in development)
-- **Auto-draft replies** - LLM-generated drafts for action-required emails
-- **Daily/weekly digests** - Email summaries with stats
-- **Smart escalation** - Telegram alerts for urgent emails
-- **Follow-up tracking** - Remind when awaiting replies
-- **Unsubscribe automation** - Track repeat promotions
-- **Label suggestions** - Approve new labels via Telegram
-- **Auto-archive** - Policy-based email archiving
-- **Advanced analytics** - Trend analysis and performance metrics
 
 ## Architecture
 
@@ -63,7 +52,7 @@ graph LR
 
 ```bash
 # Clone repository
-git clone https://github.com/USERNAME/sortbox.git
+git clone https://github.com/mangobanaani/sortbox.git
 cd sortbox
 
 # Install dependencies
@@ -402,37 +391,6 @@ The default `labels.yaml` includes 10 categories:
 | `promotions` | Marketing, sales | Discount keywords |
 | `calendar` | Meeting invites | Invitation, event, RSVP |
 
-## Roadmap
-
-### v1.0 - Classifier (Current)
-- [x] Rule-based matching
-- [x] LLM fallback
-- [x] n8n integration
-- [x] 10 label categories
-- [x] Docker deployment
-- [x] CI/CD pipelines
-- [x] 98% test coverage
-- [x] Label management UI
-- [x] Analytics dashboard
-
-### v2.0 - Orchestrator (In Development)
-- [ ] Follow-up tracking with reminders
-- [ ] Auto-draft reply generation
-- [ ] Daily/weekly digest emails
-- [ ] Telegram escalation for urgent emails
-- [ ] Promotion counter and unsubscribe suggestions
-- [ ] Label suggestion approval flow
-- [ ] Archive policies by label
-- [ ] Multi-trigger n8n orchestrator
-- [ ] Advanced analytics with trend analysis
-
-### v3.0 - Advanced (Planned)
-- [ ] Multi-account support
-- [ ] Smart threading and conversation grouping
-- [ ] VIP sender routing
-- [ ] Scheduled send for drafts
-- [ ] Email summarization
-- [ ] Export analytics to CSV
 
 ## Contributing
 
@@ -447,13 +405,7 @@ Contributions welcome! Please:
 
 ## License
 
-MIT License - see LICENSE file for details.
-
-## Support
-
-- **Issues**: [GitHub Issues](https://github.com/USERNAME/sortbox/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/USERNAME/sortbox/discussions)
-- **Documentation**: See `docs/` directory for design documents
+GNU General Public License v3.0 - see LICENSE file for details.
 
 ## Acknowledgments
 
