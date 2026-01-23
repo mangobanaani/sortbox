@@ -1,0 +1,69 @@
+{
+  "name": "Sortbox",
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "getAll",
+        "returnAll": false,
+        "limit": 100,
+        "filters": {
+          "labelIds": ["INBOX"],
+          "q": "-label:processed"
+        }
+      },
+      "name": "Gmail - Fetch",
+      "type": "n8n-nodes-base.gmail",
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/classify",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "emails",
+              "value": "={{ $json.messages.map(m => ({email_id: m.id, sender: m.from, subject: m.subject, body_preview: m.snippet})) }}"
+            }
+          ]
+        }
+      },
+      "name": "Classify Emails",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "batchSize": 1
+      },
+      "name": "Split Results",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "addLabels",
+        "messageId": "={{ $json.email_id }}",
+        "labelIds": "={{ $json.labels }}"
+      },
+      "name": "Gmail - Apply Labels",
+      "type": "n8n-nodes-base.gmail",
+      "position": [1050, 300]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {"main": [[{"node": "Gmail - Fetch", "type": "main", "index": 0}]]},
+    "Gmail - Fetch": {"main": [[{"node": "Classify Emails", "type": "main", "index": 0}]]},
+    "Classify Emails": {"main": [[{"node": "Split Results", "type": "main", "index": 0}]]},
+    "Split Results": {"main": [[{"node": "Gmail - Apply Labels", "type": "main", "index": 0}]]}
+  }
+}

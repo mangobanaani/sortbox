@@ -1,0 +1,78 @@
+labels:
+  finance:
+    description: "Invoices, receipts, payment confirmations, bank statements, tax documents"
+    rules:
+      - from: "*@stripe.com"
+      - from: "*@paypal.com"
+      - from: "*@invoice.*"
+      - from: "*@billing.*"
+      - subject_contains: ["invoice", "receipt", "payment", "statement", "refund"]
+
+  newsletters:
+    description: "Subscribed content, digests, weekly roundups, blog updates"
+    rules:
+      - header_list_unsubscribe: true
+      - subject_contains: ["digest", "newsletter", "weekly roundup", "unsubscribe"]
+
+  action-required:
+    description: "Emails that need a reply, a decision, or action from me"
+    rules: []
+
+  notifications:
+    description: "Automated alerts from services, CI/CD, monitoring, deployments"
+    rules:
+      - from: "*@github.com"
+      - from: "*notifications@*"
+      - from: "*noreply@*"
+      - from: "*@gitlab.com"
+      - from: "*@bitbucket.org"
+      - from: "*@circleci.com"
+      - from: "*@vercel.com"
+      - from: "*@netlify.com"
+      - from: "*@sentry.io"
+      - from: "*@datadog.com"
+
+  shipping:
+    description: "Package tracking, delivery updates, order confirmations"
+    rules:
+      - subject_contains: ["tracking", "shipped", "delivered", "out for delivery", "order confirmed"]
+      - from: "*@ups.com"
+      - from: "*@fedex.com"
+      - from: "*@dhl.com"
+      - from: "*@usps.com"
+      - from: "*@posti.fi"
+
+  travel:
+    description: "Flight confirmations, hotel bookings, rental cars, itineraries"
+    rules:
+      - subject_contains: ["booking confirmation", "itinerary", "flight", "reservation"]
+      - from: "*@booking.com"
+      - from: "*@airbnb.com"
+      - from: "*@finnair.com"
+      - from: "*@hotels.com"
+
+  security:
+    description: "Login alerts, password resets, 2FA codes, suspicious activity warnings"
+    rules:
+      - subject_contains: ["password reset", "verify your", "security alert", "sign-in", "two-factor", "suspicious"]
+
+  social:
+    description: "Messages from people I know, personal conversations, introductions"
+    rules: []
+
+  promotions:
+    description: "Marketing emails, sales, discounts, product announcements"
+    rules:
+      - subject_contains: ["% off", "sale", "limited time", "exclusive offer", "promo"]
+
+  calendar:
+    description: "Meeting invites, event reminders, schedule changes, RSVPs"
+    rules:
+      - subject_contains: ["invitation:", "event:", "reminder:", "rsvp", "calendar"]
+      - from: "*@calendar.google.com"
+
+settings:
+  llm_provider: "claude"
+  confidence_threshold: 0.7
+  max_emails_per_run: 100
+  suggestion_file: "suggestions.json"

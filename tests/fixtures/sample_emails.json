@@ -1,0 +1,32 @@
+[
+  {
+    "email_id": "msg001",
+    "from": "billing@stripe.com",
+    "subject": "Invoice #1234 for January",
+    "body_preview": "Your invoice for January is ready. Amount: $49.00"
+  },
+  {
+    "email_id": "msg002",
+    "from": "noreply@github.com",
+    "subject": "[repo] New issue: Fix login bug",
+    "body_preview": "A new issue has been opened in your repository."
+  },
+  {
+    "email_id": "msg003",
+    "from": "newsletter@techblog.com",
+    "subject": "Weekly Digest: Top Articles",
+    "body_preview": "Here are this week's top articles..."
+  },
+  {
+    "email_id": "msg004",
+    "from": "boss@company.com",
+    "subject": "Re: Q1 Planning",
+    "body_preview": "Can you send me the updated timeline by Friday?"
+  },
+  {
+    "email_id": "msg005",
+    "from": "support@randomservice.com",
+    "subject": "Your account settings have been updated",
+    "body_preview": "This is to confirm that your notification preferences were changed."
+  }
+]

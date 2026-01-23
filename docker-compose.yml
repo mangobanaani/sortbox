@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  sortbox:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sortbox
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./labels.yaml:/app/labels.yaml
+      - ./data:/app/data
+    environment:
+      # LLM Provider Configuration (uncomment and configure as needed)
+      # ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      # OPENAI_API_KEY: ${OPENAI_API_KEY}
+      DATABASE_PATH: /app/data/sortbox.db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
