@@ -345,35 +345,6 @@ Get classification analytics.
 }
 ```
 
-## CI/CD
-
-### GitHub Actions
-
-Two workflows configured:
-
-**CI Pipeline** (`ci.yml`)
-- Triggers: Manual, push to main/feature/*, pull requests
-- Jobs: Test (98% coverage), Lint, Type Check, Security, Docker Build
-- All jobs run in parallel for speed
-
-**CD Pipeline** (`cd.yml`)
-- Trigger: Manual only
-- Environments: Staging, Production
-- Builds and pushes Docker images to registry
-
-### Running CI Locally
-
-```bash
-# Simulate CI checks locally
-make check
-
-# Individual checks
-make test
-make lint
-make typecheck
-make security
-```
-
 ## Label Categories
 
 The default `labels.yaml` includes 10 categories:
