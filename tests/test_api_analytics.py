@@ -1,11 +1,13 @@
-import pytest
-from httpx import AsyncClient, ASGITransport
-from src.main import app
-from src.database import init_database, insert_classification_event
 import tempfile
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from datetime import datetime, timedelta, timezone
 from unittest.mock import patch
+
+import pytest
+from httpx import ASGITransport, AsyncClient
+
+from src.database import init_database, insert_classification_event
+from src.main import app
 
 
 @pytest.mark.asyncio
@@ -25,7 +27,9 @@ async def test_get_analytics():
             insert_classification_event("newsletters", "llm", 0.8)
 
             # Test endpoint
-            async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            async with AsyncClient(
+                transport=ASGITransport(app=app), base_url="http://test"
+            ) as client:
                 response = await client.get("/api/analytics")
 
             assert response.status_code == 200
@@ -52,7 +56,9 @@ async def test_get_analytics_empty_database():
             init_database()
 
             # Test endpoint with no data
-            async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            async with AsyncClient(
+                transport=ASGITransport(app=app), base_url="http://test"
+            ) as client:
                 response = await client.get("/api/analytics")
 
             assert response.status_code == 200
@@ -83,23 +89,26 @@ async def test_get_analytics_time_filtered():
             conn = src.database.sqlite3.connect(src.database.DATABASE_PATH)
 
             # Event from 10 days ago (should not count in today or this_week)
-            old_timestamp = datetime.now(timezone.utc) - timedelta(days=10)
+            old_timestamp = datetime.now(UTC) - timedelta(days=10)
             conn.execute(
-                "INSERT INTO classification_events (timestamp, label, method, confidence) VALUES (?, ?, ?, ?)",
+                "INSERT INTO classification_events "
+                "(timestamp, label, method, confidence) VALUES (?, ?, ?, ?)",
                 (old_timestamp, "finance", "rule", 1.0)
             )
 
             # Event from 3 days ago (should count in this_week but not today)
-            week_timestamp = datetime.now(timezone.utc) - timedelta(days=3)
+            week_timestamp = datetime.now(UTC) - timedelta(days=3)
             conn.execute(
-                "INSERT INTO classification_events (timestamp, label, method, confidence) VALUES (?, ?, ?, ?)",
+                "INSERT INTO classification_events "
+                "(timestamp, label, method, confidence) VALUES (?, ?, ?, ?)",
                 (week_timestamp, "newsletters", "llm", 0.8)
             )
 
             # Event from today (should count in both today and this_week)
-            today_timestamp = datetime.now(timezone.utc) - timedelta(hours=2)
+            today_timestamp = datetime.now(UTC) - timedelta(hours=2)
             conn.execute(
-                "INSERT INTO classification_events (timestamp, label, method, confidence) VALUES (?, ?, ?, ?)",
+                "INSERT INTO classification_events "
+                "(timestamp, label, method, confidence) VALUES (?, ?, ?, ?)",
                 (today_timestamp, "personal", "rule", 0.95)
             )
 
@@ -107,7 +116,9 @@ async def test_get_analytics_time_filtered():
             conn.close()
 
             # Test endpoint
-            async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            async with AsyncClient(
+                transport=ASGITransport(app=app), base_url="http://test"
+            ) as client:
                 response = await client.get("/api/analytics")
 
             assert response.status_code == 200
@@ -131,8 +142,13 @@ async def test_get_analytics_database_error():
             init_database()
 
             # Mock count_classifications to raise an exception
-            with patch('src.api.analytics.count_classifications', side_effect=Exception("Database error")):
-                async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+            with patch(
+                'src.api.analytics.count_classifications',
+                side_effect=Exception("Database error")
+            ):
+                async with AsyncClient(
+                transport=ASGITransport(app=app), base_url="http://test"
+            ) as client:
                     response = await client.get("/api/analytics")
 
                 assert response.status_code == 500

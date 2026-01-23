@@ -1,13 +1,14 @@
 """Analytics API endpoints."""
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
+
 from fastapi import APIRouter, HTTPException
 
 from src.api.models import AnalyticsResponse
 from src.database import (
-    count_classifications,
-    get_label_counts,
     count_by_method,
+    count_classifications,
     get_average_confidence,
+    get_label_counts,
 )
 
 router = APIRouter(prefix="/api/analytics", tags=["analytics"])
@@ -22,16 +23,17 @@ async def get_analytics() -> AnalyticsResponse:
     - **total_all_time**: Total number of classifications ever recorded
     - **total_today**: Classifications since midnight UTC today
     - **total_this_week**: Classifications in the last 7 days (168 hours)
-    - **by_label**: Count of classifications per label (e.g., {"finance": 5, "newsletters": 3})
+    - **by_label**: Count of classifications per label
+      (e.g., {"finance": 5, "newsletters": 3})
     - **rule_classifications**: Count of classifications made by rules
     - **llm_classifications**: Count of classifications made by LLM
-    - **avg_confidence**: Average confidence score across all classifications (0.0-1.0)
+    - **avg_confidence**: Average confidence score (0.0-1.0)
 
     Raises:
         HTTPException: 500 if database operation fails
     """
     try:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
         week_start = now - timedelta(days=7)
 

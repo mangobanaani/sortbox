@@ -1,10 +1,19 @@
-import pytest
-import tempfile
 import sqlite3
-from pathlib import Path
+import tempfile
 from datetime import datetime, timedelta
-from src.database import init_database, get_connection, insert_classification_event
-from src.database import count_classifications, get_label_counts, count_by_method, get_average_confidence
+from pathlib import Path
+
+import pytest
+
+from src.database import (
+    count_by_method,
+    count_classifications,
+    get_average_confidence,
+    get_connection,
+    get_label_counts,
+    init_database,
+    insert_classification_event,
+)
 
 
 def test_init_database_creates_table():
@@ -21,7 +30,8 @@ def test_init_database_creates_table():
             # Verify table exists
             with get_connection() as conn:
                 cursor = conn.execute(
-                    "SELECT name FROM sqlite_master WHERE type='table' AND name='classification_events'"
+                    "SELECT name FROM sqlite_master WHERE type='table' "
+                    "AND name='classification_events'"
                 )
                 result = cursor.fetchone()
                 assert result is not None
@@ -43,7 +53,8 @@ def test_init_database_creates_indexes():
             # Verify indexes exist
             with get_connection() as conn:
                 cursor = conn.execute(
-                    "SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='classification_events'"
+                    "SELECT name FROM sqlite_master WHERE type='index' "
+                    "AND tbl_name='classification_events'"
                 )
                 indexes = [row[0] for row in cursor.fetchall()]
                 assert "idx_timestamp" in indexes
@@ -67,7 +78,8 @@ def test_init_database_idempotency():
             # Verify table still exists and works
             with get_connection() as conn:
                 cursor = conn.execute(
-                    "SELECT name FROM sqlite_master WHERE type='table' AND name='classification_events'"
+                    "SELECT name FROM sqlite_master WHERE type='table' "
+                    "AND name='classification_events'"
                 )
                 result = cursor.fetchone()
                 assert result is not None
@@ -87,7 +99,7 @@ def test_get_connection_error_handling():
 
         try:
             with pytest.raises(sqlite3.OperationalError):
-                with get_connection() as conn:
+                with get_connection():
                     pass
         finally:
             src.database.DATABASE_PATH = original_path
@@ -145,11 +157,15 @@ def test_insert_classification_event_validation():
                 insert_classification_event("finance", "   ", 1.0)
 
             # Test confidence below range
-            with pytest.raises(ValueError, match="confidence must be between 0.0 and 1.0"):
+            with pytest.raises(
+                ValueError, match="confidence must be between 0.0 and 1.0"
+            ):
                 insert_classification_event("finance", "rule", -0.1)
 
             # Test confidence above range
-            with pytest.raises(ValueError, match="confidence must be between 0.0 and 1.0"):
+            with pytest.raises(
+                ValueError, match="confidence must be between 0.0 and 1.0"
+            ):
                 insert_classification_event("finance", "rule", 1.1)
 
             # Verify no invalid data was inserted
@@ -182,7 +198,10 @@ def test_insert_classification_event_edge_cases():
 
             # Verify all were inserted
             with get_connection() as conn:
-                cursor = conn.execute("SELECT label, method, confidence FROM classification_events ORDER BY id")
+                cursor = conn.execute(
+                    "SELECT label, method, confidence FROM "
+                    "classification_events ORDER BY id"
+                )
                 rows = cursor.fetchall()
                 assert len(rows) == 3
                 assert rows[0]["label"] == "finance"
@@ -217,7 +236,10 @@ def test_insert_classification_event_multiple():
                 assert count == 3
 
                 # Verify order and content
-                cursor = conn.execute("SELECT label, method, confidence FROM classification_events ORDER BY id")
+                cursor = conn.execute(
+                    "SELECT label, method, confidence FROM "
+                    "classification_events ORDER BY id"
+                )
                 rows = cursor.fetchall()
                 assert rows[0]["label"] == "finance"
                 assert rows[0]["method"] == "rule"

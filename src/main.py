@@ -8,15 +8,15 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from src.api.labels import router as labels_router
 from src.api.analytics import router as analytics_router
-from src.database import init_database
+from src.api.labels import router as labels_router
 from src.classifier.providers.claude import ClaudeProvider
 from src.classifier.providers.ollama_provider import OllamaProvider
 from src.classifier.providers.openai_provider import OpenAIProvider
 from src.classifier.service import create_app
 from src.config import LabelConfig, load_config
 from src.config_watcher import watch_config_file
+from src.database import init_database
 
 
 def get_provider(

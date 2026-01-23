@@ -1,9 +1,9 @@
 """Database layer for analytics tracking."""
-from pathlib import Path
 import sqlite3
-from contextlib import contextmanager
 from collections.abc import Generator
+from contextlib import contextmanager
 from datetime import datetime
+from pathlib import Path
 
 DATABASE_PATH = Path("data/sortbox.db")
 
@@ -23,8 +23,14 @@ def init_database() -> None:
                     confidence REAL NOT NULL
                 )
             """)
-            conn.execute("CREATE INDEX IF NOT EXISTS idx_timestamp ON classification_events(timestamp)")
-            conn.execute("CREATE INDEX IF NOT EXISTS idx_label ON classification_events(label)")
+            conn.execute(
+                "CREATE INDEX IF NOT EXISTS idx_timestamp "
+                "ON classification_events(timestamp)"
+            )
+            conn.execute(
+                "CREATE INDEX IF NOT EXISTS idx_label "
+                "ON classification_events(label)"
+            )
             conn.commit()
     except sqlite3.Error as e:
         raise RuntimeError(f"Failed to initialize database: {e}") from e
@@ -49,9 +55,12 @@ def insert_classification_event(
     """Insert a classification event.
 
     Args:
-        label: Classification label (e.g., 'finance', 'personal'). Must be non-empty.
-        method: Classification method (e.g., 'rule', 'ml'). Must be non-empty.
-        confidence: Confidence score for the classification. Must be between 0.0 and 1.0.
+        label: Classification label (e.g., 'finance', 'personal').
+               Must be non-empty.
+        method: Classification method (e.g., 'rule', 'ml').
+                Must be non-empty.
+        confidence: Confidence score for the classification.
+                    Must be between 0.0 and 1.0.
 
     Raises:
         ValueError: If label or method is empty, or confidence is out of range.
@@ -68,7 +77,8 @@ def insert_classification_event(
     try:
         with get_connection() as conn:
             conn.execute(
-                "INSERT INTO classification_events (label, method, confidence) VALUES (?, ?, ?)",
+                "INSERT INTO classification_events "
+                "(label, method, confidence) VALUES (?, ?, ?)",
                 (label, method, confidence)
             )
             conn.commit()
@@ -85,7 +95,9 @@ def count_classifications(since: datetime | None = None) -> int:
                 (since,)
             ).fetchone()
         else:
-            result = conn.execute("SELECT COUNT(*) FROM classification_events").fetchone()
+            result = conn.execute(
+                "SELECT COUNT(*) FROM classification_events"
+            ).fetchone()
         return result[0]
 
 
